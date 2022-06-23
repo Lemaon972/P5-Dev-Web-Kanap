@@ -8,7 +8,7 @@ const ITEMS_PER_PAGE = 8
 const receptionKanapsData = async () => fetch("http://localhost:3000/api/products")
   .then(res => res.json())
     .then(data => data)
-    .catch(err => console.log("Le serveur à un problème", err))
+    .catch(err => console.log("we need a problem houston", err))
 
 // Créer les autres élements HTML et leurs contenus
 
