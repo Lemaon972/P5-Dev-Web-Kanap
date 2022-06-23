@@ -1,12 +1,11 @@
 // Défini $items pour assigner comme enfants tous les objets HTML
 
 const $items = document.getElementById("items")
-
 const ITEMS_PER_PAGE = 8
 
 // Requête FETCH API
 
-const retrieveKanapsData = async () => fetch("http://localhost:3000/api/products")
+const receptionKanapsData = async () => fetch("http://localhost:3000/api/products")
   .then(res => res.json())
     .then(data => data)
     .catch(err => console.log("Le serveur à un problème", err))
@@ -56,7 +55,7 @@ const createKanapItem = kanap => {
 // Défini comme enfant de $items
 
   const main = async () => {
-    const kanapsData = await retrieveKanapsData()
+    const kanapsData = await receptionKanapsData()
 
     for (let i = 0; i < ITEMS_PER_PAGE; i++) {
         if (kanapsData[i]) {
