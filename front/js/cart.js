@@ -284,4 +284,5 @@ document.addEventListener("DOMContentLoaded", () =>{
     cartItem.renderCartItems();
     cartItem.userChanges();
     order.confirmOrder();
+   
 });

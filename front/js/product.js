@@ -102,6 +102,7 @@ class UI{
                 console.log(cart);
             }  
             LocalStorage.saveCart(cart);
+            window.location.assign("cart.html");
         });
     }
 }
@@ -115,7 +116,7 @@ class LocalStorage{
 
 // On initilaise les classes et lance la requète http 
 // On commence le rendu des produits 
-// On ajoute EvvenListener sur le bouton Ajouter au panier
+// On utilise EvvenListener sur le bouton Ajouter au panier
 document.addEventListener("DOMContentLoaded", () =>{
 
     const ui = new UI();
@@ -126,4 +127,5 @@ document.addEventListener("DOMContentLoaded", () =>{
     }).then(() =>{
         ui.addToCart();
     })
+
 });
