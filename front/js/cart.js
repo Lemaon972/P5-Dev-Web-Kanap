@@ -1,472 +1,288 @@
-// Défini des elements du DOM
+const totalPrice = document.getElementById('totalPrice');
 
-const $cart__items = document.getElementById("cart__items")
-const $cart = document.getElementById("cart")
+let cartData = localStorage.getItem('cart');
+let cart;
+let contact ={}
+cart = JSON.parse(cartData);
 
-// Défini des variables vides pour contourner leurs limites d'appel
 
-let cart = ""
-let number = +""
-let price = +""
-let firstNameVerification = false
-let lastNameVerification = false
-let addressVerification = false
-let cityVerification = false
-let emailVerification = false
-let formVerification = false
+class CartItem{
 
-// Requête API avec ID
-
-const retrieveApiData = async () => fetch(`http://localhost:3000/api/products/${itemData.id}`)
-  .then(res => res.json())
-  .then(data => data)
-  .catch(err => console.log("we need a problem houston", err))
-
-// Créer les élements HTML pour les images
-
-const createCartItemImg = cartItem => {
-  const $cart__item__img = document.createElement("div")
-  $cart__item__img.classList.add("cart__item__img")
-
-  const $img = document.createElement("img")
-  $img.setAttribute("src", itemApiData.imageUrl)
-  $img.setAttribute("alt", itemApiData.altTxt)
-
-  $cart__item__img.appendChild($img)
-
-  return $cart__item__img
-}
-
-// Créer les élements HTML pour la description
-
-function createCartItemContentDescription() {
-  const $cart__item__content__description = document.createElement("div")
-  $cart__item__content__description.classList.add("cart__item__content__description")
-
-  const $itemName = document.createElement("h2")
-  $itemName.textContent = itemApiData.name
-
-  const $itemColor = document.createElement("p")
-  $itemColor.textContent = itemData.color
-  const $itemPrice = document.createElement("p")
-  $itemPrice.textContent = itemApiData.price + " €"
-
-  $cart__item__content__description.appendChild($itemName)
-  $cart__item__content__description.appendChild($itemColor)
-  $cart__item__content__description.appendChild($itemPrice)
-
-  return $cart__item__content__description
-}
-
-// Créer élements HTML pour les paramètres de quantité
-
-const createCartItemContentSettingsQuantity = cartItem => {
-  const $cart__item__content__settings__quantity = document.createElement("div")
-  $cart__item__content__settings__quantity.classList.add("cart__item__content__settings__quantity")
-
-  const $pQuantity = document.createElement("p")
-  $pQuantity.textContent = "Qté :"
-
-  const $itemQuantity = document.createElement("input")
-  $itemQuantity.setAttribute("type", "number")
-  $itemQuantity.classList.add("itemQuantity")
-  $itemQuantity.setAttribute("name", "itemQuantity")
-  $itemQuantity.setAttribute("min", "1")
-  $itemQuantity.setAttribute("max", "100")
-  $itemQuantity.setAttribute("value", itemData.quantity)
-
-  $cart__item__content__settings__quantity.appendChild($pQuantity)
-  $cart__item__content__settings__quantity.appendChild($itemQuantity)
-
-  return $cart__item__content__settings__quantity
-}
-
-// Créer élements HTML pour le bouton supprimer
-
-const createCartItemContentSettingsDelete = cartItem => {
-  const $cart__item__content__settings__delete = document.createElement("div")
-  $cart__item__content__settings__delete.classList.add("cart__item__content__settings__delete")
-
-  const $deleteItem = document.createElement("p")
-  $deleteItem.classList.add("deleteItem")
-  $deleteItem.textContent = "Supprimer"
-
-  $cart__item__content__settings__delete.appendChild($deleteItem)
-
-  return $cart__item__content__settings__delete
-}
-
-// Créer élement HTML pour les paramètres
-// Appelle les fontions qui créer son contenu
-// Créer les enfants du DOM
-
-const createCartItemContentSettings = cartItem => {
-  const $cart__item__content__settings = document.createElement("div")
-  $cart__item__content__settings.classList.add("cart__item__content__settings")
-
-  const $cart__item__content__settings__quantity = createCartItemContentSettingsQuantity(cartItem)
-  const $cart__item__content__settings__delete = createCartItemContentSettingsDelete(cartItem)
-
-  $cart__item__content__settings.appendChild(createCartItemContentSettingsQuantity($cart__item__content__settings__quantity))
-  $cart__item__content__settings.appendChild(createCartItemContentSettingsDelete($cart__item__content__settings__delete))
-
-  return $cart__item__content__settings
-}
-
-// Créer éléments HTML pour le CONTENT
-// Appelle les fontions qui créer son contenu
-// Assigne les enfants
-
-const createCartItemContent = cartItem => {
-  const $cart__item__content= document.createElement("div")
-  $cart__item__content.classList.add("cart__item__content")
-
-  const $cart__item__content__description = createCartItemContentDescription(cartItem)
-  const $cart__item__content__settings = createCartItemContentSettings(cartItem)
-
-  $cart__item__content.appendChild(createCartItemContentDescription($cart__item__content__description))
-  $cart__item__content.appendChild(createCartItemContentSettings($cart__item__content__settings))
-
-  return $cart__item__content
-}
-
-// Créer éléments HTML pour l'ARTICLE
-// Appelle les fontions qui créer son contenu
-// Assigne les enfants
-
-const createCartItemArticle = cartItem => {
-  const $cartItemArticle = document.createElement("article")
-  $cartItemArticle.classList.add("cart__item")
-  $cartItemArticle.setAttribute("data-id", cartItem.id)
-  $cartItemArticle.setAttribute("data-color", cartItem.color)
-
-  const $cart__item__img = createCartItemImg(cartItem)
-  const $cart__item__content = createCartItemContent(cartItem)
-
-  $cartItemArticle.appendChild(createCartItemImg($cart__item__img))
-  $cartItemArticle.appendChild(createCartItemContent($cart__item__content))
-
-  return $cartItemArticle
-}
-
-// Affiche la quantité d'article
-// Si = 0, défini à 0
-// Sinon, pour chaque item : récupère la quantité, l'additionne et l'Affiche
-// Affiche le prix TOTAL contenu dans la variable PRICE
-
-const cartPrice = () => {
-  const totalQuantity = document
-  .getElementById("totalQuantity")
-
-  if (cart.item.length === 0) {
-    totalQuantity.textContent = 0
-  } else {
-    for (let numberOfArticles = 0; numberOfArticles <= cart.item.length -1; numberOfArticles++) {
-      let numberInCart = +cart.item[`${numberOfArticles}`].quantity
-      number = number + numberInCart
-      totalQuantity.textContent = number
-    }
-  }
-
-  const totalPrice = document
-  .getElementById("totalPrice")
-  .textContent = price
-}
-
-// Récupère l'ID et color de l'item concerné
-// Défini l'index de l'item pour le localiser
-// Modifie la quantité si + ou -
-// Met à jour le localStorage
-// Met à jour la quantité et prix total affiché en appelant cartPrice
-
-const quantityInputsChange = async (e) => {
-  let targetItem = e.target.closest("article")
-  let targetId = targetItem.dataset.id
-  let targetColor = targetItem.dataset.color
-
-  let itemIndex = cart.item.findIndex(item => item.id === targetId && item.color === targetColor)
-
-  if (cart.item[`${itemIndex}`].quantity < e.target.value) {
-    price = price + itemApiData.price
-  } else {
-    price = price - itemApiData.price
-  }
-
-  cart.item[`${itemIndex}`].quantity = e.target.value
-
-  localStorage.setItem("cartItems", JSON.stringify(cart))
-
-  number = 0
-
-  itemData.id = targetId
-
-  itemApiData = await retrieveApiData()
-
-  cartPrice()
-}
-
-// Récupère l'ID et color de l'item concerné
-// Défini l'index de l'item pour le localiser
-// Récupère la quantité et le prix
-// Met à jour les données pour la suppression
-// Supprime l'item du DOM et du tableau
-// Met a jour localStorage
-// Met à jour la quantité et prix total affiché en appelant cartPrice
-
-const deleteItem = async (e) => {
-  console.log("DELETE : ");
-  let targetItem = e.target.closest("article")
-  console.log(targetItem);
-  let targetId = targetItem.dataset.id
-  let targetColor = targetItem.dataset.color
-  console.log(targetId);
-
-  let itemIndex = cart.item.findIndex(item => item.id === targetId && item.color === targetColor)
-
-  console.log(itemIndex);
-
-  let targetQuantity = document.querySelector(`article[data-id='${targetId}'][data-color='${targetColor}'] input.itemQuantity`)
-  let targetPrice = document.querySelector(`article[data-id='${targetId}'] div.cart__item__content__description > p:last-child`)
-
-  console.log("TARGET QUANTITY : ", targetQuantity.value);
-  console.log("TARGET PRICE : ", targetPrice.textContent);
-
-  targetPriceValue = targetPrice.textContent.replace(" €", "")
-
-  number = number - targetQuantity.value
-  targetQuantPrice = targetPriceValue * targetQuantity.value
-  price = price - targetQuantPrice
-
-  console.log(targetQuantPrice);
-
-  $cart__items.removeChild(targetItem)
-  cart.item.splice(itemIndex, 1,)
-
-  localStorage.setItem("cartItems", JSON.stringify(cart))
-
-  number = 0
-
-  cartPrice()
-}
-
-// Définie toutes les RegEx suivant la donnée à vérifier
-
-function contactFormVerification(e) {
-  if (e.target.id === "firstName") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      firstNameVerification = false
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = "Champ incorrect"
-      firstNameVerification = false
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      firstNameVerification = true
-    }
-  } else if (e.target.id === "lastName") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      lastNameVerification = false
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = "Champ incorrect"
-      lastNameVerification = false
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      lastNameVerification = true
-    }
-  } else if (e.target.id === "address") {
-    const addressRegEx = /[0-9,'a-zA-Zéèàêëï]/g
-    if (e.target.value === "") {
-      let error = document.getElementById("addressErrorMsg")
-      error.textContent = ""
-      addressVerification = false
-    } else if (e.target.value.match(addressRegEx) === null) {
-      let error = document.getElementById("addressErrorMsg")
-      error.textContent = "address incorrect"
-      addressVerification = false
-    } else {
-      let error = document.getElementById("addressErrorMsg")
-      error.textContent = ""
-      addressVerification = true
-    }
-  } else if (e.target.id === "city") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      cityVerification = false
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = "Champ incorrect"
-      cityVerification = false
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`)
-      error.textContent = ""
-      cityVerification = true
-    }
-  } else {
-    const emailRegEx = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
-    if (e.target.value === "") {
-      let error = document.getElementById("emailErrorMsg")
-      error.textContent = ""
-      emailVerification = false
-    } else if (e.target.value.match(emailRegEx) === null) {
-      let error = document.getElementById("emailErrorMsg")
-      error.textContent = "Email incorrect"
-      emailVerification = false
-    } else {
-      let error = document.getElementById("emailErrorMsg")
-      error.textContent = ""
-      emailVerification = true
-    }
-  }
-
-  if ((firstNameVerification === true) && (lastNameVerification === true) && (addressVerification === true) && (cityVerification === true) && (emailVerification === true)) {
-    formVerification = true
-    console.log(formVerification);
-  }
-}
-
-// Requête API POST
-// Si valide, redirige vers une URL comportant l'orderID
-
-function postOrder(order) {
-  console.log(order);
-  const postOrder = fetch('http://localhost:3000/api/products/order', {
-  method: 'POST',
-  body: JSON.stringify(order),
-  headers: {
-    'Content-Type': 'application/json;charset=utf-8'
-  },
-  })
-  .then(function(response) {
-    return response.json();
-  })
-  .then(function (server) {
-    localStorage.clear()
-    orderId = server.orderId;
-    if (server.orderId != "") {
-      console.log(orderId);
-        location.href = "confirmation.html?id=" + server.orderId;
-      }
-    console.log(orderId);
-  })
-  .catch((err) => {
-    console.log("Problème avec fetch : " + err.message);
-  })
-}
-
-// Créer l'ordre de commande avec le contenu de la requête POST
-
-function createOrder(event) {
-  event.preventDefault()
-  console.log("order");
-  console.log(formVerification);
-
-  if (formVerification === true) {
-    let products = []
-
-    for (let productsN = 0; productsN < cart.item.length -1; productsN++) {
-      products.push(cart.item[`${productsN}`].id)
+    constructor(){
+        this.section = document.getElementById('cart__items');
     }
 
-    const order = {
-      contact : {
-        firstName : document.getElementById("firstName").value,
-        lastName : document.getElementById("lastName").value,
-        address : document.getElementById("address").value,
-        city : document.getElementById("city").value,
-        email : document.getElementById("email").value
-      },
-      products : products
+    renderCartItems(){
+
+        // Insertion des données du localStorage dans une variable, puis on l'ajoute
+        cart.forEach(item =>{
+
+            let itemElement = `
+            <div class="cart__item__img">
+              <img src="${item.img}" alt="${item.altTxt}">
+            </div>
+            <div class="cart__item__content">
+              <div class="cart__item__content__description">
+                <h2>${item.name}</h2>
+                <p>${item.color}</p>
+                <p>€${item.price * item.quantity}</p>
+              </div>
+              <div class="cart__item__content__settings">
+                <div class="cart__item__content__settings__quantity">
+                  <p>${item.quantity} : </p>
+                  <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="${item.quantity}">
+                </div>
+                <div class="cart__item__content__settings__delete">
+                  <p class="deleteItem">Delete</p>
+                </div>
+              </div>
+            </div>
+            `;
+            const listItem = document.createElement('article');
+            listItem.classList.add('cart__item');
+            listItem.setAttribute('data-id',`${item.id}`);
+            listItem.setAttribute('data-col',`${item.color}`);
+            listItem.innerHTML = itemElement;
+            this.section.appendChild(listItem);
+            Utils.totalCartItems();
+            Utils.totalCartPrice();
+            
+        });
+
+    } 
+
+    userChanges(){
+
+        let quantityBtn = document.querySelectorAll('.itemQuantity');
+
+        // On recherche dans le Dom les quantités qui doivent être changées
+        // pour correspondre aux modifications apportées au bouton itemQuantity
+        function chnageQuantity(){
+            
+            quantityBtn.forEach((btn) =>{
+
+                btn.addEventListener('click', () =>{
+              
+                const btnItemId = btn.parentNode.parentNode.parentNode.parentNode.getAttribute('data-id');
+                const getItemPrice = btn.parentNode.parentNode.previousElementSibling;
+                const price = getItemPrice.children[2];
+                const btnColor = btn.parentNode.parentNode.previousElementSibling;
+                const btnItemColor = btnColor.children[1].textContent;
+                const btnItemQuantity = btn.previousElementSibling;
+                
+                const findIndex = cart.findIndex((cartItems) =>{
+                    return cartItems.id === btnItemId && cartItems.color === btnItemColor;
+               });
+
+               cart[findIndex].quantity = btn.value;
+                btnItemQuantity.innerHTML = `${cart[findIndex].quantity}`;
+                price.innerHTML = `€${ cart[findIndex].price * btn.value}`;
+
+                Utils.totalCartPrice();
+                Utils.totalCartItems();
+                LocalStorage.saveCart();
+                });
+            });
+        }
+        //Recherche dans le Dom de la balise article à supprimer et màj du localStorage après suppression
+        function deleteItem(){
+            let deleteBtn = document.querySelectorAll('.deleteItem');
+            
+            deleteBtn.forEach((btn) =>{
+                btn.addEventListener('click', () => {
+
+                    const articleNode = btn.parentNode.parentNode.parentNode.parentNode;
+                    const btnId = articleNode.getAttribute('data-id');
+
+                    const findIndex = cart.findIndex((cartItems) =>{
+                        return cartItems.id === btnId;
+                   });
+                 
+                    cart.splice(findIndex,1);                   
+                    articleNode.remove();
+                    Utils.totalCartPrice();
+                    Utils.totalCartItems();
+                    LocalStorage.saveCart();
+                });
+            });
+        }
+       
+        chnageQuantity();
+        deleteItem();
     }
-
-    console.log("products ", products);
-    console.log("REQUETE JSON : ", order);
-
-    postOrder(order)
-  } else {
-    console.log("Form is not valid");
-  }
 }
 
-// Écoute les champs du formualire pour vérification RegEx
+class UserInputForm{
 
-const firstName = document
-  .getElementById("firstName")
-  .addEventListener("focusout", contactFormVerification)
+    confirmOrder(){
 
-const lastName = document
-  .getElementById("lastName")
-  .addEventListener("focusout", contactFormVerification)
+        // Champs de saisie du formulaire
+        const firstName = document.getElementById('firstName');
+        const lastName = document.getElementById('lastName');
+        const address = document.getElementById('address');
+        const city = document.getElementById('city');
+        const email = document.getElementById('email');
+        const confirmOrderBtn = document.getElementById('order');
 
-const address = document
-  .getElementById("address")
-  .addEventListener("focusout", contactFormVerification)
+        // Erreurs
+        const firstNameErr = document.getElementById('firstNameErrorMsg');
+        const lastNameErr = document.getElementById('lastNameErrorMsg');
+        const addressErr = document.getElementById('addressErrorMsg');
+        const cityErr = document.getElementById('cityErrorMsg');
+        const emailErr = document.getElementById('emailErrorMsg');
 
-const city = document
-  .getElementById("city")
-  .addEventListener("focusout", contactFormVerification)
+        // REGEX
+        const regexEmail = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const regexNames = /^[a-z ,.'-]+$/i;
+        const regexaddress = /^\s*\S+(?:\s+\S+){2}/;
 
-const email = document
-  .getElementById("email")
-  .addEventListener("focusout", contactFormVerification)
+        firstNameErr.innerText = ' ';
+        lastNameErr.innerText = ' ';
+        addressErr.innerText = ' ';
+        cityErr.innerText = ' ';
+        emailErr.innerText = ' ';
 
-// Écoute le click du bouton de commande pour appeler createOrder
+        // Supprimer les messages d'erreurs après correction 
+        firstName.addEventListener('focus',() =>{
+            firstNameErr.innerText = ' ';
+        });
 
-const orderBtn = document
-  .getElementById("order")
-  .addEventListener("click", createOrder)
+        lastName.addEventListener('focus',() =>{
+            lastNameErr.innerText = ' ';
+        });
 
-// Parse les données du localStorage
-// Si localStorage contient des données, récupère le nombre d'entrées
-// FOR => Pour chaque entrée, récupère les data API, calcul le prix, créer enfant du DOM
+        address.addEventListener('focus',() =>{
+            addressErr.innerText = ' ';
+        });
 
-const main = async () => {
-  cart = JSON.parse(localStorage.getItem("cartItems"))
+        city.addEventListener('focus',() =>{
+            cityErr.innerText = ' ';
+        });
 
-  if (cart !== null) {
-    const numberOfCartItems = cart.item.length - 1
+        email.addEventListener('focus',() =>{
+            emailErr.innerText = ' ';
+        });
 
-    for (let i = 0; i <= numberOfCartItems; i++) {
-      itemData = cart.item[`${i}`]
 
-      itemApiData = await retrieveApiData()
+        // Vérification de l'entrée utilisateur est valide
+        // Envoi après des données 
+        confirmOrderBtn.addEventListener('click', (event) =>{
 
-      quantPrice = itemApiData.price * itemData.quantity
+            event.preventDefault();
 
-      price = price + quantPrice
+            validate(firstName.value,regexNames,'please enter a vaild first name',firstNameErr);
+            validate(lastName.value,regexNames,'please enter a vaild last name', lastNameErr);
+            validate(address.value,regexaddress,'please enter a vaild address', addressErr);
+            validate(city.value,regexNames,'please enter a vaild city', cityErr);
+            validate(email.value,regexEmail,'please enter a vaild email address', emailErr);
 
-      $cart__items.appendChild(createCartItemArticle(itemData))
+            if(
+                validate(firstName.value,regexNames,'please enter a vaild first name',firstNameErr) === true ||
+                validate(lastName.value,regexNames,'please enter a vaild last name', lastNameErr) === true ||
+                validate(address.value,regexaddress,'please enter a vaild address', addressErr) === true ||
+                validate(city.value,regexNames,'please enter a vaild city', cityErr) === true ||
+                validate(email.value,regexEmail,'please enter a vaild email address', emailErr)  === true
+            ){
+                return 0;
 
+            }else{
+            
+                const userInfo = [];
+                cart.forEach(item =>{
+                    userInfo.push(item.id);
+                });
+    
+               const postaData = {
+                contact: {
+                    firstName: firstName.value.trim(),
+                    lastName: lastName.value.trim(),
+                    address: address.value.trim(),
+                    city: city.value.trim(),
+                    email: email.value.trim()
+                },
+                products: userInfo
+               }
+
+               if(cart.length === 0){
+                    alert('cart is empty');
+               }else{
+                    Post.SendData(postaData); 
+               }     
+            }
+        });
+
+        // Vérification de la saisie utilisateur avec REGEX
+        function validate(value,regexType,msg,errmsg){
+            if(regexType.test(value) === false || value === ''){
+                errmsg.innerText = msg;
+                errmsg.style.color = 'red';
+                return true;
+            }else{
+                return false;
+            }
+        }
     }
-  }
-
-  // Appelle cartPrice avec les data API
-
-  cartPrice(cart)
-
-  // Créer pour chaque entrée un eventListener du boutton supprimer
-
-  deleteItemElements = document.getElementsByClassName("deleteItem")
-  for (let p = 0; p <= deleteItemElements.length - 1; p++) {
-    deleteItemElements[`${p}`].addEventListener("click", deleteItem)
-  }
-
-  // Créer pour chaque entrée un eventListener de la quantité
-
-  quantityInputsElements = document.querySelectorAll("div.cart__item__content__settings__quantity > input")
-  for (let q = 0; q <= quantityInputsElements.length -1; q++) {
-    quantityInputsElements[`${q}`].addEventListener("change", quantityInputsChange)
-  }
 }
 
-main()
+class Post{
+    // Transmission des données et redirection vers la page de confirmation
+    static async SendData(bodyData){
+
+       fetch(' http://localhost:3000/api/products/order',{
+         method: 'post',
+         body: JSON.stringify(bodyData),
+         headers:{
+            'Content-Type':'application/json'
+         }
+       }).then(function (response){
+           return response.text();
+       }).then(function (text){
+           const parseText = JSON.parse(text);
+           window.location.replace(`./confirmation.html?id=${parseText.orderId}`);
+       }).catch(function (error){
+           console.log(error);
+       });
+    }
+}
+
+class LocalStorage{
+    // use to update or set the cart in localStorage 
+    static saveCart(){
+        localStorage.setItem('cart', JSON.stringify(cart));
+    }
+}
+
+
+class Utils{
+    // used to update the total price of all products in cart 
+    static totalCartPrice(){
+        const cartItemContentDescription = document.querySelectorAll('.cart__item__content__description');
+        let totalItems = 0;
+        
+        cartItemContentDescription.forEach(item =>{
+            totalItems += parseInt(item.children[2].innerText.slice(1));
+        });
+        totalPrice.innerHTML = totalItems;
+    }
+    // used to update the total quanitity of items in cart 
+    static totalCartItems(){
+        const totalQuantity = document.getElementById('totalQuantity');
+        let items = 0;
+        cart.forEach(item =>{
+            items += parseInt(item.quantity);
+        });
+       totalQuantity.innerHTML = items;
+    }
+}
+
+
+// initializes classes renders the products in the cart 
+// initializes EventListeners for userchanges and confirmOrder 
+document.addEventListener("DOMContentLoaded", () =>{
+    const cartItem = new CartItem();
+    const order = new UserInputForm();
+
+    cartItem.renderCartItems();
+    cartItem.userChanges();
+    order.confirmOrder();
+});
