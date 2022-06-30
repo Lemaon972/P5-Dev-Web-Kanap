@@ -4,3 +4,4 @@ orderId.innerHTML = getProductId;
 
 let cartData = localStorage.getItem('cart');
 let cart;
+localStorage.clear();

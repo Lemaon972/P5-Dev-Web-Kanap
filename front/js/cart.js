@@ -246,7 +246,7 @@ class Post{
 }
 
 class LocalStorage{
-    // use to update or set the cart in localStorage 
+    // Mettre à jour ou définir le panier dans localStorage
     static saveCart(){
         localStorage.setItem('cart', JSON.stringify(cart));
     }
@@ -254,7 +254,7 @@ class LocalStorage{
 
 
 class Utils{
-    // used to update the total price of all products in cart 
+    // Mettre à jour le prix total de tous les produits du panier 
     static totalCartPrice(){
         const cartItemContentDescription = document.querySelectorAll('.cart__item__content__description');
         let totalItems = 0;
@@ -264,7 +264,7 @@ class Utils{
         });
         totalPrice.innerHTML = totalItems;
     }
-    // used to update the total quanitity of items in cart 
+    // Mettre à jour la quantité totale d'articles dans le panier
     static totalCartItems(){
         const totalQuantity = document.getElementById('totalQuantity');
         let items = 0;
@@ -276,8 +276,7 @@ class Utils{
 }
 
 
-// initializes classes renders the products in the cart 
-// initializes EventListeners for userchanges and confirmOrder 
+ 
 document.addEventListener("DOMContentLoaded", () =>{
     const cartItem = new CartItem();
     const order = new UserInputForm();
