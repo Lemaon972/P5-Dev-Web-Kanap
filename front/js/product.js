@@ -1,131 +1,136 @@
-const productImage = document.querySelector('.item__img');
-const selectColor = document.getElementById('colors');
-const priceEl = document.getElementById('price');
-const descriptionEl = document.getElementById('description');
-const titleEl = document.getElementById('title');
-const pageTitle = document.querySelector('title');
-const quantityInput = document.getElementById('quantity');
-const addToCartBtn = document.getElementById('addToCart');
-const imgTag = document.createElement('img');
+// Défini des elements du DOM
 
-const getProductId = location.search.substring(4);  
-let cartData = localStorage.getItem('cart');
-let cart;
+const $kanapItemImg = document.getElementsByClassName("item__img");
+const $kanapItemColors = document.getElementById("colors");
+const $pageTitle = document.querySelector("title");
 
-if(cartData === null){
-   cart = [];
-}else{
-    cart = JSON.parse(cartData);
+// Récupère ID dans URL
+
+const params = window.location.href;
+var url = new URL(params);
+var id = url.searchParams.get("id");
+
+// Créer un tableau cartItems avec item
+let item = localStorage.getItem("cartItems");
+if (item === null) {
+  cartItems = [];
+  console.log("mayo");
+} else {
+  cartItems = JSON.parse(item);
+  console.log("Ketchup");
+}
+// Requête API avec ID
+
+const receptionKanapData = async () =>
+  fetch(`http://localhost:3000/api/products/${id}`)
+    .then((res) => res.json())
+    .then((data) => data)
+    .catch((err) => console.log("we need a problem houston", err));
+
+// Créer élement IMG, setAttribute avec data API
+// Créer un enfant du DOM et retourner l'objet
+
+const createKanapImg = (kanap) => {
+  const $kanapImg = document.createElement("img");
+  $kanapImg.setAttribute("src", kanap.imageUrl);
+
+  $kanapItemImg[0].appendChild($kanapImg);
+
+  return $kanapImg;
+};
+
+// Boucle FOR pour chaque couleur de l'ID data API
+// Créer élement option, setAttribute avec data API
+// Créer un enfant du DOM
+
+const createKanapColors = (kanap) => {
+  for (let i = 0; i <= kanap.colors.length - 1; i++) {
+    const $kanapColors = document.createElement("option");
+    $kanapColors.setAttribute("value", kanap.colors[`${i}`]);
+    $kanapColors.textContent = kanap.colors[`${i}`];
+
+    $kanapItemColors.appendChild($kanapColors);
+  }
+};
+
+// Appelle les functions
+// Remplis les éléments du DOM avec data API
+
+const createKanapItem = (kanap) => {
+  const $kanapImg = createKanapImg(kanap);
+
+  const $kanapTitle = document.getElementById("title");
+  $kanapTitle.textContent = kanap.name;
+  $pageTitle.textContent = kanap.name;
+  const $kanapDescription = document.getElementById("description");
+  $kanapDescription.textContent = kanap.description;
+
+  const $kanapPrice = document.getElementById("price");
+  $kanapPrice.textContent = kanap.price;
+
+  const $kanapColors = createKanapColors(kanap);
+};
+
+// Récupère color et quantity sélectionnées
+// Si quantity = 0, ne rien faire (pour ne créer de ligne vide)
+// Si l'ID ET color sont déja dans le tableau, trouve l'index et modifie la quantité et met à jour le localStorage
+// Sinon push l'entrée dans le tableau et met à jour le localStorage
+
+function addToCartData(event) {
+  const selectedColor = document.getElementById("colors").value;
+
+  const selectedQuantity = document.getElementById("quantity").value;
+
+  if (selectedQuantity === "0") {
+    alert("Veuillez saisir la quantité");
+  } else if (selectedColor === "") {
+    alert("veuillez saisir choisir une couleur");
+  } else if (
+    cartItems.item.find(
+      (item) => item.id === id && item.color === selectedColor
+    )
+  ) {
+    console.log("Un de plus");
+    let itemIndex = cartItems.item.findIndex(
+      (item) => item.id === id && item.color === selectedColor
+    );
+
+    console.log(itemIndex);
+
+    const cartItemQuantity = +cartItems.item[`${itemIndex}`].quantity;
+    const quantityToAdd = +selectedQuantity;
+
+    cartItems.item[`${itemIndex}`].quantity = `${
+      cartItemQuantity + quantityToAdd
+    }`;
+
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    location.href = "cart.html";
+  } else {
+    console.log("Un nouveau");
+    cartItems.item.push({
+      id: id,
+      color: selectedColor,
+      quantity: selectedQuantity,
+    });
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    location.href = "cart.html";
+  }
 }
 
-class Products{
-    // Récupération des données avec une requète GET 
-    async fetchProducts(){
-        
-        try{
-            let result = await fetch('http://localhost:3000/api/products');
-            let data = await result.json();
+// Récupère le button dans le DOM
+// Ècoute son click event et appelle addToCartData
 
-            return data;
-            
-        }catch(error){
-            console.log(error);
-        }
-    }    
-}
+const addToCart = document.getElementById("addToCart");
+addToCart.addEventListener("click", addToCartData);
 
-// On affiche
-class UI{
+// Récupère les data API dans kanapData
+// Appelle createKanapItem avec les data API
 
-  
-    renderProducts(data){
-        // On utilise les données pour afficher l'image et les informations du produit
-        data.forEach(function(data){
+const main = async () => {
+  const kanapData = await receptionKanapData();
 
-            if(getProductId === data._id){
-                
-                priceEl.innerText =  data.price;
-                descriptionEl.innerText = data.description;
-                titleEl.innerText = data.name;
-                pageTitle.innerText = data.name;
+  createKanapItem(kanapData);
+};
 
-                imgTag.src = data.imageUrl;
-                imgTag.alt = data.altTxt;
-                imgTag.className = "new__img";
-
-                productImage.appendChild(imgTag);
-                // On recupère dans le tableau de couleur les valeurs
-                // On affiche les couleurs dans le menu déroulant
-                data.colors.forEach(function(color){
-                    const option = document.createElement('option');
-                    option.innerText = color;
-                    selectColor.appendChild(option);
-                });
-            }
-        });
-    }
-    
-    addToCart(){
-
-        // On créé l'article à partir des données choisies par l'utilisateur
-        addToCartBtn.addEventListener('click', ()=>{
-            
-            const item = {
-                id : getProductId,
-                name: titleEl.innerText,
-                price : priceEl.innerText,
-                img: imgTag.src,
-                description: descriptionEl.innerText,
-                altTxt: imgTag.alt,
-                color : selectColor.value,
-                quantity  : quantityInput.value
-            }
-            // Vérification si l'article est déjà dans le panier
-            const findIdex = cart.findIndex((cartItems) =>{
-                return cartItems.id === item.id && cartItems.color === item.color;
-           });
-
-           console.log(findIdex);
-
-           if(cart === []){
-                console.log("Premier article dans le panier");
-                cart.push(item);
-            }else if(findIdex === -1){
-                cart.push(item);
-                console.log(cart);
-            }else{
-                // Si l'article est déjà dans le panier on rajoute la quantité
-                console.log(findIdex);
-                const newQuantity = parseInt(cart[findIdex].quantity) + parseInt(item.quantity);
-                cart[findIdex].quantity = String(newQuantity);
-
-                console.log(cart);
-            }  
-            LocalStorage.saveCart(cart);
-            window.location.assign("cart.html");
-        });
-    }
-}
-
-class LocalStorage{
-    // On place les produits dnas le loacalstorage
-    static saveCart(){
-        localStorage.setItem('cart', JSON.stringify(cart));
-    }
-}
-
-// On initilaise les classes et lance la requète http 
-// On commence le rendu des produits 
-// On utilise EvvenListener sur le bouton Ajouter au panier
-document.addEventListener("DOMContentLoaded", () =>{
-
-    const ui = new UI();
-    const products = new Products();
-
-    products.fetchProducts().then(data =>{
-    ui.renderProducts(data);
-    }).then(() =>{
-        ui.addToCart();
-    })
-
-});
+main();

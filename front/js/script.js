@@ -1,3 +1,6 @@
+let cartItems = {
+  item: [],
+};
 // Fonction lancée au lancement de la page
 const init = async () => {
   const products = await getProducts();
@@ -10,17 +13,14 @@ const result = document.querySelector("#items");
 
 // Récupérer les produits de l'API
 async function getProducts() {
-  try{
-
+  try {
     const response = await fetch("http://localhost:3000/api/products");
     const body = await response.json();
     return body;
-  } catch(e){
-    alert("Il y a un problème avec le serveur, merci de réessayer plus tard")
+  } catch (e) {
+    alert("Il y a un problème avec le serveur, merci de réessayer plus tard");
   }
 }
-
-
 
 // Afficher les produits
 function displayKanap(products) {
