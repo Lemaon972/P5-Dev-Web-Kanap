@@ -2,15 +2,7 @@
 
 const $cart__items = document.getElementById("cart__items");
 const $cart = document.getElementById("cart");
-// Créer un tableau cartItems avec item
-let item = localStorage.getItem("cartItems");
-if (item === null) {
-  cartItems = [];
-  console.log("mayo");
-} else {
-  cartItems = JSON.parse(item);
-  console.log("Ketchup");
-}
+
 // Défini des variables vides pour contourner leurs limites d'appel
 
 let cart = "";
@@ -187,15 +179,15 @@ const createCartItemArticle = (cartItem) => {
 const cartPrice = () => {
   const totalQuantity = document.getElementById("totalQuantity");
 
-  if (cart.item.length === 0) {
+  if (cart.length === 0) {
     totalQuantity.textContent = 0;
   } else {
     for (
       let numberOfArticles = 0;
-      numberOfArticles <= cart.item.length - 1;
+      numberOfArticles <= cart.length - 1;
       numberOfArticles++
     ) {
-      let numberInCart = +cart.item[`${numberOfArticles}`].quantity;
+      let numberInCart = +cart[`${numberOfArticles}`].quantity;
       number = number + numberInCart;
       totalQuantity.textContent = number;
     }
@@ -216,17 +208,17 @@ const quantityInputsChange = async (e) => {
   let targetId = targetItem.dataset.id;
   let targetColor = targetItem.dataset.color;
 
-  let itemIndex = cart.item.findIndex(
+  let itemIndex = cart.findIndex(
     (item) => item.id === targetId && item.color === targetColor
   );
 
-  if (cart.item[`${itemIndex}`].quantity < e.target.value) {
+  if (cart[`${itemIndex}`].quantity < e.target.value) {
     price = price + itemApiData.price;
   } else {
     price = price - itemApiData.price;
   }
 
-  cart.item[`${itemIndex}`].quantity = e.target.value;
+  cart[`${itemIndex}`].quantity = e.target.value;
 
   localStorage.setItem("cartItems", JSON.stringify(cart));
 
@@ -255,7 +247,7 @@ const deleteItem = async (e) => {
   let targetColor = targetItem.dataset.color;
   console.log(targetId);
 
-  let itemIndex = cart.item.findIndex(
+  let itemIndex = cart.findIndex(
     (item) => item.id === targetId && item.color === targetColor
   );
 
@@ -280,7 +272,7 @@ const deleteItem = async (e) => {
   console.log(targetQuantPrice);
 
   $cart__items.removeChild(targetItem);
-  cart.item.splice(itemIndex, 1);
+  cart.splice(itemIndex, 1);
 
   localStorage.setItem("cartItems", JSON.stringify(cart));
 
@@ -421,8 +413,8 @@ function createOrder(event) {
   if (formVerification === true) {
     let products = [];
 
-    for (let productsN = 0; productsN < cart.item.length - 1; productsN++) {
-      products.push(cart.item[`${productsN}`].id);
+    for (let productsN = 0; productsN < cart.length - 1; productsN++) {
+      products.push(cart[`${productsN}`].id);
     }
 
     const order = {
@@ -481,10 +473,10 @@ const main = async () => {
   cart = JSON.parse(localStorage.getItem("cartItems"));
 
   if (cart !== null) {
-    const numberOfCartItems = cart.item.length - 1;
+    const numberOfCartItems = cart.length - 1;
 
     for (let i = 0; i <= numberOfCartItems; i++) {
-      itemData = cart.item[`${i}`];
+      itemData = cart[`${i}`];
 
       itemApiData = await retrieveApiData();
 

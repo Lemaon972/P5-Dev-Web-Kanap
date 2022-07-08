@@ -86,9 +86,7 @@ function addToCartData(event) {
   } else if (selectedColor === "") {
     alert("veuillez saisir choisir une couleur");
   } else if (
-    cartItems.item.find(
-      (item) => item.id === id && item.color === selectedColor
-    )
+    cartItems.find((item) => item.id === id && item.color === selectedColor)
   ) {
     console.log("Un de plus");
     let itemIndex = cartItems.item.findIndex(
@@ -105,10 +103,9 @@ function addToCartData(event) {
     }`;
 
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
-    location.href = "cart.html";
   } else {
     console.log("Un nouveau");
-    cartItems.item.push({
+    cartItems.push({
       id: id,
       color: selectedColor,
       quantity: selectedQuantity,
