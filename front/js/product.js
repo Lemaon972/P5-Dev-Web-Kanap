@@ -89,20 +89,18 @@ function addToCartData(event) {
     cartItems.find((item) => item.id === id && item.color === selectedColor)
   ) {
     console.log("Un de plus");
-    let itemIndex = cartItems.item.findIndex(
+    let itemIndex = cartItems.findIndex(
       (item) => item.id === id && item.color === selectedColor
     );
 
     console.log(itemIndex);
 
-    const cartItemQuantity = +cartItems.item[`${itemIndex}`].quantity;
+    const cartItemQuantity = +cartItems[`${itemIndex}`].quantity;
     const quantityToAdd = +selectedQuantity;
 
-    cartItems.item[`${itemIndex}`].quantity = `${
-      cartItemQuantity + quantityToAdd
-    }`;
-
+    cartItems[`${itemIndex}`].quantity = `${cartItemQuantity + quantityToAdd}`;
     localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    location.href = "cart.html";
   } else {
     console.log("Un nouveau");
     cartItems.push({
