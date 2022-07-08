@@ -281,96 +281,140 @@ const deleteItem = async (e) => {
   cartPrice();
 };
 
-// Définie toutes les RegEx suivant la donnée à vérifier
+// Récupère tout les id à vérifier
+const firstName = document.getElementById("firstName");
+const lastName = document.getElementById("lastName");
+const address = document.getElementById("address");
+const city = document.getElementById("city");
+const email = document.getElementById("email");
+const confirmOrderBtn = document.getElementById("order");
 
-function contactFormVerification(e) {
-  if (e.target.id === "firstName") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u;
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      firstNameVerification = false;
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "Champ incorrect";
-      firstNameVerification = false;
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      firstNameVerification = true;
-    }
-  } else if (e.target.id === "lastName") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u;
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      lastNameVerification = false;
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "Champ incorrect";
-      lastNameVerification = false;
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      lastNameVerification = true;
-    }
-  } else if (e.target.id === "address") {
-    const addressRegEx = /[0-9,'a-zA-Zéèàêëï]/g;
-    if (e.target.value === "") {
-      let error = document.getElementById("addressErrorMsg");
-      error.textContent = "";
-      addressVerification = false;
-    } else if (e.target.value.match(addressRegEx) === null) {
-      let error = document.getElementById("addressErrorMsg");
-      error.textContent = "address incorrect";
-      addressVerification = false;
-    } else {
-      let error = document.getElementById("addressErrorMsg");
-      error.textContent = "";
-      addressVerification = true;
-    }
-  } else if (e.target.id === "city") {
-    const firstNameRegEx = /^[a-zA-ZéèàêëïÈÉÊËÌÍÎÏ]+$/u;
-    if (e.target.value === "") {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      cityVerification = false;
-    } else if (e.target.value.match(firstNameRegEx) === null) {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "Champ incorrect";
-      cityVerification = false;
-    } else {
-      let error = document.getElementById(`${e.target.id}ErrorMsg`);
-      error.textContent = "";
-      cityVerification = true;
-    }
-  } else {
-    const emailRegEx =
-      /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g;
-    if (e.target.value === "") {
-      let error = document.getElementById("emailErrorMsg");
-      error.textContent = "";
-      emailVerification = false;
-    } else if (e.target.value.match(emailRegEx) === null) {
-      let error = document.getElementById("emailErrorMsg");
-      error.textContent = "Email incorrect";
-      emailVerification = false;
-    } else {
-      let error = document.getElementById("emailErrorMsg");
-      error.textContent = "";
-      emailVerification = true;
-    }
-  }
+// Erreurs
+const firstNameErr = document.getElementById("firstNameErrorMsg");
+const lastNameErr = document.getElementById("lastNameErrorMsg");
+const addressErr = document.getElementById("addressErrorMsg");
+const cityErr = document.getElementById("cityErrorMsg");
+const emailErr = document.getElementById("emailErrorMsg");
+
+// REGEX
+const regexEmail =
+  /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+const regexNames = /^[a-z ,.'-]+$/i;
+const regexaddress = /^\s*\S+(?:\s+\S+){2}/;
+
+firstNameErr.innerText = " ";
+lastNameErr.innerText = " ";
+addressErr.innerText = " ";
+cityErr.innerText = " ";
+emailErr.innerText = " ";
+
+// Supprimer les messages d'erreurs après correction
+firstName.addEventListener("focus", () => {
+  firstNameErr.innerText = " ";
+});
+
+lastName.addEventListener("focus", () => {
+  lastNameErr.innerText = " ";
+});
+
+address.addEventListener("focus", () => {
+  addressErr.innerText = " ";
+});
+
+city.addEventListener("focus", () => {
+  cityErr.innerText = " ";
+});
+
+email.addEventListener("focus", () => {
+  emailErr.innerText = " ";
+});
+
+// Vérification de l'entrée utilisateur est valide
+// Envoi après des données
+confirmOrderBtn.addEventListener("click", (event) => {
+  event.preventDefault();
+
+  validate(
+    firstName.value,
+    regexNames,
+    "Veuillez saisir votre prénom",
+    firstNameErr
+  );
+  validate(
+    lastName.value,
+    regexNames,
+    "Veuillez saisir votre nom",
+    lastNameErr
+  );
+  validate(
+    address.value,
+    regexaddress,
+    "Veuillez saisir votre addresse",
+    addressErr
+  );
+  validate(city.value, regexNames, "Veuillez saisir votre ville", cityErr);
+  validate(email.value, regexEmail, "Veuillez saisir votre email", emailErr);
 
   if (
-    firstNameVerification === true &&
-    lastNameVerification === true &&
-    addressVerification === true &&
-    cityVerification === true &&
-    emailVerification === true
+    validate(
+      firstName.value,
+      regexNames,
+      "Veuillez saisir un prénom valide",
+      firstNameErr
+    ) === true ||
+    validate(
+      lastName.value,
+      regexNames,
+      "Veuillez saisir un nom valide",
+      lastNameErr
+    ) === true ||
+    validate(
+      address.value,
+      regexaddress,
+      "Veuillez saisir une adresse valide",
+      addressErr
+    ) === true ||
+    validate(
+      city.value,
+      regexNames,
+      "Veuillez saisir une ville valide",
+      cityErr
+    ) === true ||
+    validate(
+      email.value,
+      regexEmail,
+      "Veuillez saisir un email valide",
+      emailErr
+    ) === true
   ) {
+    return 0;
+  } else {
+    const userInfo = [];
+    cart.forEach((item) => {
+      userInfo.push(item.id);
+    });
+
+    const postaData = {
+      contact: {
+        firstName: firstName.value.trim(),
+        lastName: lastName.value.trim(),
+        address: address.value.trim(),
+        city: city.value.trim(),
+        email: email.value.trim(),
+      },
+      products: userInfo,
+    };
+  }
+});
+
+// Vérification de la saisie utilisateur avec REGEX
+function validate(value, regexType, msg, errmsg) {
+  if (regexType.test(value) === false || value === "") {
+    errmsg.innerText = msg;
+    errmsg.style.color = "white";
+  } else {
     formVerification = true;
-    console.log(formVerification);
+    return false;
   }
 }
 
@@ -408,7 +452,6 @@ function postOrder(order) {
 function createOrder(event) {
   event.preventDefault();
   console.log("order");
-  console.log(formVerification);
 
   if (formVerification === true) {
     let products = [];
@@ -438,26 +481,6 @@ function createOrder(event) {
 }
 
 // Écoute les champs du formualire pour vérification RegEx
-
-const firstName = document
-  .getElementById("firstName")
-  .addEventListener("focusout", contactFormVerification);
-
-const lastName = document
-  .getElementById("lastName")
-  .addEventListener("focusout", contactFormVerification);
-
-const address = document
-  .getElementById("address")
-  .addEventListener("focusout", contactFormVerification);
-
-const city = document
-  .getElementById("city")
-  .addEventListener("focusout", contactFormVerification);
-
-const email = document
-  .getElementById("email")
-  .addEventListener("focusout", contactFormVerification);
 
 // Écoute le click du bouton de commande pour appeler createOrder
 
