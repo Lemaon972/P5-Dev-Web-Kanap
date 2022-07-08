@@ -14,7 +14,6 @@ let addressVerification = false;
 let cityVerification = false;
 let emailVerification = false;
 let formVerification = false;
-
 // Requête API avec ID
 
 const retrieveApiData = async () =>
@@ -181,6 +180,7 @@ const cartPrice = () => {
 
   if (cart.length === 0) {
     totalQuantity.textContent = 0;
+    console.log("Aucun produit dans le panier");
   } else {
     for (
       let numberOfArticles = 0;
