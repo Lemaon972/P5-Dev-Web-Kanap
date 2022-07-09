@@ -178,7 +178,7 @@ const createCartItemArticle = (cartItem) => {
 const cartPrice = () => {
   const totalQuantity = document.getElementById("totalQuantity");
 
-  if (cart.length === 0) {
+  if (cart === null) {
     totalQuantity.textContent = 0;
     console.log("Aucun produit dans le panier");
   } else {
@@ -411,7 +411,7 @@ confirmOrderBtn.addEventListener("click", (event) => {
 function validate(value, regexType, msg, errmsg) {
   if (regexType.test(value) === false || value === "") {
     errmsg.innerText = msg;
-    errmsg.style.color = "white";
+    console.log("Aucun produit dans le panier");
   } else {
     formVerification = true;
     return false;

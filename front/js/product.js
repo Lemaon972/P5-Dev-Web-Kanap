@@ -81,7 +81,7 @@ function addToCartData(event) {
 
   const selectedQuantity = document.getElementById("quantity").value;
 
-  if (selectedQuantity === "0") {
+  if (selectedQuantity === "0" || selectedQuantity === "") {
     alert("Veuillez saisir la quantité");
   } else if (selectedColor === "") {
     alert("veuillez saisir choisir une couleur");

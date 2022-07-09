@@ -1,6 +1,3 @@
-let cartItems = {
-  item: [],
-};
 // Fonction lancée au lancement de la page
 const init = async () => {
   const products = await getProducts();
